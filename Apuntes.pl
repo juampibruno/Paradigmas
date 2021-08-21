@@ -7,11 +7,28 @@
 
 % si quiero que sean iguales le tengo que poner el mismo nombre de variable. Pasa en el caso de ataque especial 
 
+%not/1
+
+% forall/2
 % forall siempre tiene 2 predicados antecendente y conscuente
 % forall(antecedente,consecuente).
 
+%todas las personas de este meet, estudian ingenieria.
+% todas las personas de este meet => estudian ingenieria.
+
+%para todo pokemon del entrenador, el pokemon es de fuego
+
+tieneTodosLosPokemonDeFuego(Entrenador):-
+    equipo(Entrenador,_), %aca lo que hago es ligar la variable entrenador.
+    forall(equipo(Entrenador,Pokemon),pokemon(Pokemon,fuego)).
+
+%Si al forall llegan todas las variables ligadas no tiene ningun sentido pq se convierte en un existencial en cambio de un universal. 
+% y un existencial es una consulta simple en prolog. No seria necesario el forall
+
 % Las variables al forall las que quiero que analize todas deben llegar desligadas, es decir no tienen que estar unificadas.
 % Se hace con la variable anonima eso.
+
+% las variables que llegan sin ligar al forall actuan como todos.
 
 % En el momento del forall una variable tiene que estar ligada y otra tiene que estar libre.
 
