@@ -1,0 +1,97 @@
+import Riley.*
+import Recuerdos.*
+import Emociones.*
+
+describe "Intensa Mente" {
+	
+	const riley = new Persona(felicidad = 1000 ,emocionDominante = alegria)
+	
+	const recuerdoAlegre = new Recuerdo(descripcion = "Me sentia re zarpado", emocion = alegria )
+	const recuerdoTriste = new Recuerdo(descripcion = "se re pudrio ese dia y re llore" , emocion = tristeza)
+	const recuerdoFurioso = new Recuerdo(descripcion = "furioso mal, lo cague a palo a ese gil", emocion = furia )
+	const recuerdoTemeroso = new Recuerdo(descripcion = "me cague todo", emocion = temor )
+	const recuerdoDisgustante = new Recuerdo(descripcion = "Que asco", emocion = disgusto )
+	
+	test "Punto 1 - Cuando una persona vive un evento se le agrega a sus recuerdos del dia" {
+	
+	riley.vivirUnEvento("Argentina campeona copa america 2021")
+	
+	assert.equals(1,riley.recuerdosDelDia().size())
+
+}
+	
+	test "Punto 2 - Un recuerdo alegre se asienta y se convierte en pensamiento central pq la persona tiene mas de 500 de felicidad"{
+		
+	riley.felicidad(501)
+		
+	recuerdoAlegre.asentarse(riley)
+	
+	assert.that(riley.pensamientosCentrales().contains(recuerdoAlegre)) 
+	}
+	
+	test "Punto 2 - Un recuerdo alegre se asienta y NO se convierte en pensamiento central pq la persona tiene menos de 500 de felicidad"{
+		
+	riley.felicidad(499)
+		
+	recuerdoAlegre.asentarse(riley)
+	
+	assert.notThat(riley.pensamientosCentrales().contains(recuerdoAlegre)) 
+	}
+	
+	
+	test "Punto 2 - Un recuerdo cuya emocion dominante es tristeza se asienta y se convierte en pensamiento central" {
+		
+		recuerdoTriste.asentarse(riley)
+		
+		assert.that(riley.pensamientosCentrales().contains(recuerdoTriste))
+	}
+	
+	test "Punto 2 - Un recuerdo triste se asienta y disminuye la felicidad de la persona un 10%"{
+		
+		recuerdoTriste.asentarse(riley)
+		
+		assert.equals(900, riley.felicidad())
+	}
+	
+	test "Punto 2 - Un recuerdo triste se asienta y disminuye la felicidad de la persona un 10%, dejandola por debajo de 1"{
+		
+		riley.felicidad(1)
+		
+		assert.throwsExceptionWithMessage("La felicidad no puede estar por debajo de 1", {recuerdoTriste.asentarse(riley)})
+	}
+	
+	test "Punto 2 - Un recuerdo de otra emocion se asienta y no hace nada"{
+		
+	
+		
+		recuerdoFurioso.asentarse(riley)
+		
+		assert.notThat(riley.pensamientosCentrales().contains(recuerdoFurioso))
+		
+		
+	}
+	
+	test "Punto 3 - Recuerdos recientes del dia" {
+		const unRecuerdo = new Recuerdo (descripcion = "ni idea" , emocion = furia)
+		
+		riley.agregarRecurdoDia(recuerdoAlegre)
+		riley.agregarRecurdoDia(recuerdoTriste)
+		riley.agregarRecurdoDia(recuerdoFurioso)
+		riley.agregarRecurdoDia(recuerdoTemeroso)
+		riley.agregarRecurdoDia(recuerdoDisgustante)
+		riley.agregarRecurdoDia(unRecuerdo)
+		
+		const recuerdosRecientes = [unRecuerdo, recuerdoDisgustante, recuerdoTemeroso, recuerdoFurioso, recuerdoTriste]
+		
+		assert.equals(recuerdosRecientes, riley.recuerdosRecientes())
+	}
+	
+	test "Punto 5 - Pensamientos centrales dificiles de explicar"{
+		riley.agregarPensamientoCentral(recuerdoAlegre)
+		riley.agregarPensamientoCentral(recuerdoTriste)
+		riley.agregarPensamientoCentral(recuerdoFurioso)
+		
+		assert.equals(#{recuerdoTriste,recuerdoFurioso}, riley.pensamientosCentralesDificilesDeExplicar())
+	}
+}
+
