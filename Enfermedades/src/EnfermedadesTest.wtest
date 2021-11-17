@@ -1,0 +1,68 @@
+import persona.*
+import enfermedades.*
+
+describe "Dr casa"{
+	
+		const frank = new Persona(temperatura = 36, celulas = 3500000)
+		const logan = new Persona (temperatura = 36, celulas = 3000000)
+		
+		const malaria800 = new EnfermedadInfecciosa(cantidadCelulasQueAfecta = 800)
+		const malaria500 = new EnfermedadInfecciosa(cantidadCelulasQueAfecta = 500)
+		const otitis     = new EnfermedadInfecciosa(cantidadCelulasQueAfecta = 100)
+		const lupus      = new EnfermedadAutoinmune(cantidadCelulasQueAfecta = 10000)
+	
+	method initialize() {
+		frank.contraer(malaria800)
+		
+		logan.contraer(malaria500)
+		logan.contraer(otitis)
+		logan.contraer(lupus)
+	}
+	
+test "Frank contrae una malaria de 800 celulas amenazadas" {
+	assert.that(frank.tieneEnfermedad(malaria800))
+}
+
+test "La malaria de 500 celulas amenzadas sabe reproducirse"{
+	malaria500.reproducirse()
+	assert.equals(1000, malaria500.cantidadCelulasQueAfecta())
+}
+
+test "Logan vive un dia en su vida"{
+	logan.vivirUnDia()
+	assert.equals(36.6, logan.temperatura())
+}
+
+test "Enfermedad que mas afecta a logan" {
+	assert.equals(lupus, logan.enfermedadQueMasAfecta())
+}
+
+test "Logan NO esta en coma si tiene menos de 45 grados de temperatura" {
+	assert.notThat(logan.estaEnComa())
+}
+
+test "Logan  esta en coma si tiene mas de 45 grados de temperatura" {
+	logan.aumentarTemperatura(100)
+	assert.that(logan.estaEnComa())
+}
+
+test "Logan esta en coma si tiene menos de 1.000.000 de celulas " {
+	logan.destruirCelulas(2500000)
+	assert.that(logan.estaEnComa())
+}
+
+test "Logan NO esta en coma si tiene 1.000.000 de celulas" {
+	logan.destruirCelulas(2000000)
+	assert.notThat(logan.estaEnComa())
+}
+
+test "Una Enfermedad autoinmune al afectarse 31 veces se vuelve agresiva"{
+	31.times({_ => lupus.afectarA(logan)})
+	assert.that(lupus.esAgresiva())
+}
+
+test "Logan tiene alguna enfermedad agresiva"{
+	31.times({_ => logan.vivirUnDia()})
+	assert.notThat(logan.enfermedades().any({enfermedad => enfermedad.esAgresiva()}))
+}
+}
